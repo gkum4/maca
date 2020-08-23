@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
 
-import { View, Text, FlatList, TouchableOpacity, Alert, LayoutAnimation } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, LayoutAnimation, AsyncStorage } from 'react-native';
 
 import { AntDesign } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
 
 import { useFrutas } from '../../hooks/frutas';
-
-import { ordenaFrutas } from '../../utils/functions';
 
 import FrutasDoDiaListItem from '../../components/FrutasDoDiaListItem';
 
@@ -17,17 +15,26 @@ import styles from './styles';
 const Dieta = () => {
   const navigation = useNavigation();
 
-  const { frutasDoDia, gerarFrutasDoDia, frutas, deletarFruta } = useFrutas();
+  const { 
+    frutasDoDia, 
+    gerarFrutasDoDia, 
+    frutas, 
+    deletarFruta,
+    setFrutasDoDia,
+  } = useFrutas();
 
   navigation.setOptions({
     headerRight: () => (
-      <TouchableOpacity style={{ marginRight: 15 }} onPress={gerarFrutasDoDia}>
+      <TouchableOpacity style={{ marginRight: 15 }} onPress={async () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+        gerarFrutasDoDia();
+      }}>
         <AntDesign name="reload1" size={25} />
       </TouchableOpacity>
     )
   });
 
-  const handleProximaDietaPress = useCallback(() => {
+  const handleProximaDietaPress = () => {
     Alert.alert(
       'Consumiu todas as frutas?',
       undefined,
@@ -38,19 +45,18 @@ const Dieta = () => {
         },
         {
           text: 'Sim',
-          onPress: () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            frutasDoDia.forEach((item) => {
+          onPress: async () => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+            frutasDoDia.map((item) => {
               deletarFruta(item.id);
             });
-            gerarFrutasDoDia();
-            gerarFrutasDoDia();
+            setFrutasDoDia([]);
           },
         },
       ],
       { cancelable: true },
     );
-  }, [frutasDoDia, gerarFrutasDoDia, deletarFruta]);
+  }
 
   return (
     <View style={styles.container}>
@@ -63,7 +69,9 @@ const Dieta = () => {
               backgroundColor: '#A9CDE3',
             }]}
             disabled={frutas.length === 0}
-            onPress={gerarFrutasDoDia}
+            onPress={async () => {
+              gerarFrutasDoDia();
+            }}
           >
             <Text style={styles.gerarFrutasDoDiaButtonText}>Gerar dieta</Text>
           </TouchableOpacity>
@@ -89,9 +97,11 @@ const Dieta = () => {
           ListFooterComponent={() => (
             <TouchableOpacity 
               style={[styles.gerarFrutasDoDiaButton, { marginTop: 15 }]}
-              onPress={handleProximaDietaPress}
+              onPress={() => {
+                handleProximaDietaPress();
+              }}
             >
-              <Text style={styles.gerarFrutasDoDiaButtonText}>Próxima dieta</Text>
+              <Text style={styles.gerarFrutasDoDiaButtonText}>Pronto!</Text>
             </TouchableOpacity>
           )}
         />

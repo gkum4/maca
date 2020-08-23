@@ -25,7 +25,7 @@ const FrutasDoDiaListItem = ({ fruta }) => {
       <TouchableOpacity 
         style={styles.checkButtonContainer}
         onPress={() => {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
           deletarFrutaDoDia(fruta.id);
         }}
       >

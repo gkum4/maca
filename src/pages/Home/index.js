@@ -34,6 +34,7 @@ const Home = () => {
         style={{ marginRight: 15 }} 
         onPress={() => navigation.navigate('Configuracao')}
         // onPress={() => AsyncStorage.clear()}
+        // onPress={() => console.log(frutas)}
       >
         <EvilIcons name="gear" size={30} />
       </TouchableOpacity>

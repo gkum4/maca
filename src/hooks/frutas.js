@@ -5,7 +5,7 @@ import { ordenaFrutas } from '../utils/functions';
 
 const FrutasContext = createContext({});
 
-var done = false;
+let done = false;
 
 export const FrutasProvider = ({children}) => {
   const [frutas, setFrutas] = useState([]);
@@ -43,28 +43,13 @@ export const FrutasProvider = ({children}) => {
   }, []);
 
   useEffect(() => {
-    async function storeFrutas() {
+    async function storeNome() {
       await AsyncStorage.setItem(
-        'minhasFrutas', JSON.stringify(frutas)
+        'meuNome', JSON.stringify(nome)
       );
     }
-    if (done === false) {
-      return;
-    }
-    storeFrutas();
-  }, [frutas]);
-
-  useEffect(() => {
-    async function storeFrutasPorDia() {
-      await AsyncStorage.setItem(
-        'minhasFrutasPorDia', JSON.stringify(frutasPorDia)
-      );
-    }
-    if (done === false) {
-      return;
-    }
-    storeFrutasPorDia();
-  }, [frutasPorDia]);
+    storeNome();
+  }, [nome]);
 
   useEffect(() => {
     async function storeNome() {
@@ -77,6 +62,30 @@ export const FrutasProvider = ({children}) => {
     }
     storeNome();
   }, [nome]);
+
+  useEffect(() => {
+    async function storeFrutas() {
+      await AsyncStorage.setItem(
+        'minhasFrutas', JSON.stringify(frutas)
+      );
+    }
+    if (done === false) {
+      return;
+    }
+    storeFrutas();
+  }, [frutas])
+
+  useEffect(() => {
+    async function storeFrutasPorDia() {
+      await AsyncStorage.setItem(
+        'minhasFrutasPorDia', JSON.stringify(frutasPorDia)
+      );
+    }
+    if (done === false) {
+      return;
+    }
+    storeFrutasPorDia();
+  }, [frutasPorDia])
 
   useEffect(() => {
     async function storeFrutasDoDia() {
@@ -128,7 +137,7 @@ export const FrutasProvider = ({children}) => {
     setFrutas(newArr);
   }, [frutas]);
 
-  const gerarFrutasDoDia = useCallback(() => {
+  const gerarFrutasDoDia = () => {
     if (frutas.length === 0) {
       setFrutasDoDia([]);
     }
@@ -147,7 +156,7 @@ export const FrutasProvider = ({children}) => {
       }
     }
     setFrutasDoDia(newArr);
-  }, [frutas, frutasPorDia]);
+  }
 
   const deletarFrutaDoDia = useCallback((frutaId) => {
     deletarFruta(frutaId);
@@ -193,6 +202,7 @@ export const FrutasProvider = ({children}) => {
       deletarFruta, 
       forceDeletarFruta,
       frutasDoDia,
+      setFrutasDoDia,
       gerarFrutasDoDia,
       deletarFrutaDoDia,
       deletarAmbos,
